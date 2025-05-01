@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "PAU Software project: traffic prediction app",
+    "slug": "traffic-predict",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.omairsalman.trafficpredict"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.omairsalman.trafficpredict"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0c79466d-5a81-49ca-8023-f53d266d15d6"
+      }
+    },
+    "owner": "omairsalman",
+    "updates": {
+      "url": "https://u.expo.dev/0c79466d-5a81-49ca-8023-f53d266d15d6"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}
