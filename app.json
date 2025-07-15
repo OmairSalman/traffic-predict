@@ -34,6 +34,14 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox", // for Android
+          "usesAndroidX": true,
+          "android_permissions": ["ACCESS_FINE_LOCATION"]
+        }
       ]
     ],
     "experiments": {
