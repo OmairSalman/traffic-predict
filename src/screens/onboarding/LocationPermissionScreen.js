@@ -1,62 +1,97 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
-import { getCurrentLocation } from '../../services/regionService.js';
+import { ActivityIndicator, Button, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { getCurrentLocation } from '../../services/regionService';
+import Entypo from '@expo/vector-icons/Entypo';
 
-export default function LocationPermissionScreen({ navigation, finishOnboarding })
-{
-    const [requesting, setRequesting] = useState(false);
-    const [permissionGranted, setPermissionGranted] = useState(true);
-    const [requested, setRequested] = useState(false);
-    const [location, setLocation] = useState([]);
+export default function LocationPermissionScreen({ navigation }) {
+  const [requesting, setRequesting] = useState(false);
+  const [statusText, setStatusText] = useState('');
+  const [location, setLocation] = useState(null);
 
-    return (
-        <View style={styles.container}>
-        <Text style={styles.title}>We need permission to use your location</Text>
-        {requested &&
-        (permissionGranted ? (<Text style={styles.subtitle}>Permission granted!</Text>)
-        : (<Text style={styles.subtitle}>Location permissions denied! App will use a default location</Text>))}
-        { requesting ? (<ActivityIndicator size="large"/>)
-        : (<Button title="Next" onPress={async () =>
-            {
-                if(!requested)
-                {
-                    setRequesting(true);
-                    const { location, permissionGranted } = await getCurrentLocation();
-                    setPermissionGranted(permissionGranted);
-                    if(permissionGranted)
-                        setLocation([location.latitude, location.longitude]);
-                    else
-                        setLocation(location);
-                    setRequesting(false);
-                    setRequested(true);
-                }
-                else
-                {
-                    navigation.navigate('Final', {location: location});
-                }
-            }} />)
-        }
-        </View>
-    );
+  const handlePermission = async () => {
+    setRequesting(true);
+    const { location, permissionGranted } = await getCurrentLocation();
+    setStatusText(permissionGranted
+      ? 'Location permission granted!'
+      : 'Permission denied. Default location will be used.');
+    setLocation([location.latitude, location.longitude]);
+    setRequesting(false);
+  };
+
+  const handleNext = () => {
+    if (location) {
+      navigation.navigate('IntroSlider', { location: location });
+    } else {
+      setStatusText('Please grant permission first.');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+        <Entypo name="location" size={96} color="black" marginBottom={15} />
+      <Text style={styles.title}>Location Access</Text>
+      <Text style={styles.subtitle}>
+        We use your location to detect your city and load the correct map.
+      </Text>
+
+      {statusText ? <Text style={styles.status}>{statusText}</Text> : null}
+
+      {requesting ? (
+        <ActivityIndicator size="large" color="blue" />
+      ) : (
+        <>
+          <TouchableOpacity style={styles.button} onPress={handlePermission}>
+            <Text style={styles.buttonText}>Grant Location Permission</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.button, { backgroundColor: '#666' }]} onPress={handleNext}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </TouchableOpacity>
+        </>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-container:
-{
+  container: {
     flex: 1,
+    padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
-},
-title:
-{
-    fontSize: 24,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20
-},
-subtitle:
-{
-    fontSize: 18,
-    marginBottom: 20
-},
+    color: '#1A1A1A',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#444',
+    textAlign: 'center',
+    marginBottom: 30,
+    paddingHorizontal: 20,
+  },
+  status: {
+    fontSize: 16,
+    color: '#007bff',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 8,
+    marginVertical: 10,
+    minWidth: '80%',
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });

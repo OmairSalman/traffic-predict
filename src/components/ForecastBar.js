@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const screenWidth = Dimensions.get('window').width;
@@ -19,30 +19,36 @@ function getColor(prediction) {
   }
 }
 
-const ForecastBar = ({ day, onPress }) => {
+const ForecastBar = ({ day, onPress, highlighted }) => {
   const navigation = useNavigation();
   const segments = [6, 9, 12, 15, 18, 21];
 
   return (
-    <TouchableOpacity style={styles.barContainer} onPress={onPress}>
+    <TouchableOpacity
+      style={[
+        styles.barContainer,
+        highlighted && { borderWidth: 2, borderColor: 'blue', borderRadius: 8 },
+      ]}
+      onPress={onPress}
+    >
       <Text style={styles.dayLabel}>
         {day.day_name === 'Tomorrow' ? 'Tomorrow' : day.day_name}
       </Text>
       <View style={styles.segmentRow}>
         {segments.map(hour => (
-            <View
-                key={hour}
-                style={[
-                styles.segment,
-                { backgroundColor: getColor(day.predictions[hour]) }
-                ]}
-            >
-            {(hour < 12) ? (<Text style={styles.segmentText}>{hour} AM</Text>)
-            : (hour > 12) ? (<Text style={styles.segmentText}>{hour - 12} PM</Text>)
-            : (<Text style={styles.segmentText}>{hour} PM</Text>)}
-            </View>
+          <View
+            key={hour}
+            style={[
+              styles.segment,
+              { backgroundColor: getColor(day.predictions[hour]) }
+            ]}
+          >
+            <Text style={styles.segmentText}>
+              {hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`}
+            </Text>
+          </View>
         ))}
-        <Icon name="chevron-forward" size={20} color="#444"/>
+        <Icon name="chevron-forward" size={20} color="#444" />
       </View>
     </TouchableOpacity>
   );
@@ -52,7 +58,8 @@ const styles = StyleSheet.create({
   barContainer: {
     width: '100%',
     paddingHorizontal: '5%',
-    marginBottom: 16,
+    padding: 5,
+    marginBottom: 10,
   },
   dayLabel: {
     marginBottom: 4,

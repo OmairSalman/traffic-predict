@@ -1,57 +1,75 @@
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { downloadAndStoreCities } from '../../services/cityService';
 
-export default function WelcomeScreen({ navigation })
-{
-  const [loading, setLoading] = useState(true);
+export default function WelcomeScreen({ navigation }) {
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function init()
-    {
-      await downloadAndStoreCities();
-      setLoading(false);
-    }
-    init();
+    SplashScreen.hideAsync();
   }, []);
 
-  useEffect(() =>
-  {
-    if(!loading)
-      SplashScreen.hideAsync();
-  }, [loading]);
+  const downloadCities = async () => {
+    setLoading(true);
+    await downloadAndStoreCities();
+    navigation.navigate('LocPerm');
+    setLoading(false);
+  };
 
   return (
     <View style={styles.container}>
+      <Image source={require('../../../assets/images/traffico-icon.png')} style={styles.logo} />
       <Text style={styles.title}>Welcome to Traffico</Text>
-      <Text style={styles.subtitle}>traffic forecasting app</Text>
+      <Text style={styles.subtitle}>Plan smarter. Travel smoother.</Text>
+
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="blue" />
       ) : (
-        <Button title="Next" onPress={() => navigation.navigate('LocPerm')} />
+        <TouchableOpacity style={styles.nextButton} onPress={downloadCities}>
+          <Text style={styles.buttonText}>Get Started</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container:
-  {
+  container: {
     flex: 1,
+    backgroundColor: '#fff',
+    padding: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
   },
-  title:
-  {
-    fontSize: 24,
+  logo: {
+    width: 96,
+    height: 96,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 20
+    //color: 'blue',
+    textAlign: 'center',
+    marginBottom: 12,
   },
-  subtitle:
-  {
+  subtitle: {
     fontSize: 18,
-    marginBottom: 20
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 40,
+  },
+  nextButton: {
+    backgroundColor: 'blue',
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

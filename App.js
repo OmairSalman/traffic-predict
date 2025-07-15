@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import AppNavigator from './src/navigation/AppNavigator.js';
 import WelcomeNavigator from './src/navigation/WelcomeNavigator.js';
 import { loadCities } from './src/services/cityService.js';
-import { downloadGeojson } from './src/services/geojsonService.js';
 import { prefetchGeojsonCities } from './src/services/geojsonPrefetcher.js';
+import { UserProvider } from './src/components/UserContext';
+import { ToastProvider } from 'expo-toast';
 
 export default function App()
 {
@@ -41,6 +42,16 @@ export default function App()
     return null;
 
   if(!onboarded)
-    return (<WelcomeNavigator screenProps={{ finishOnboarding }}/>);
-  return (<AppNavigator screenProps={{ cityID, location }}/>);
+    return (
+    <ToastProvider>
+      <UserProvider>
+        <WelcomeNavigator screenProps={{ finishOnboarding }}/>
+      </UserProvider>
+    </ToastProvider>);
+  return (
+    <ToastProvider>
+      <UserProvider>
+        <AppNavigator screenProps={{ cityID, location }}/>
+      </UserProvider>
+    </ToastProvider>);
 }
